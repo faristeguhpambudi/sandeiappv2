@@ -136,15 +136,20 @@ class Admin extends CI_Controller
     }
 
 
+    // SYSTEM ROLE MANAGEMENT
+
     public function roleManagement()
     {
         $data['title'] = 'Role Management';
         $data['user'] = $this->db->get_where('user', ['email' =>
         $this->session->userdata('email')])->row_array();
-        $data['rolemanagement'] = $this->Admin_model->tampil_menu();
 
+        $data["userRole"] = $this->Admin_model->getUserRole();
+        $data["role"] = $this->Admin_model->getAllRole();
 
-        $this->form_validation->set_rules('menu', 'Menu', 'required');
+        $this->form_validation->set_rules('name', 'Nama', 'required');
+        $this->form_validation->set_rules('email', 'Email', 'required');
+        $this->form_validation->set_rules('id', 'Role', 'required');
 
         if ($this->form_validation->run() == false) {
 
@@ -154,44 +159,46 @@ class Admin extends CI_Controller
             $this->load->view('admin/roleManagement', $data);
             $this->load->view('template/footer');
         } else {
-            $this->Admin_model->tambahMenu();
+            $this->Admin_model->tambahUserRole();
             $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">
-            added Management Menu !!
+           Role Succes Added !!
            </div>');
-            redirect('admin/roleManagement');
+            redirect('Admin/roleManagement');
         }
     }
 
     public function editRoleManagement($id)
     {
-        $data['title'] = 'Category Asset';
+        $data['title'] = 'Edit Role Management';
         $data['user'] = $this->db->get_where('user', ['email' =>
         $this->session->userdata('email')])->row_array();
-        $data['menuManagement'] = $this->Admin_model->getMenuId($id);
+        $data["userRole"] = $this->Admin_model->getUserRoleById($id);
+        $data["role"] = $this->Admin_model->getAllRole();
 
-        $this->form_validation->set_rules('menu', 'Menu Name', 'required|trim');
+        $this->form_validation->set_rules('name', 'Nama', 'required');
+        $this->form_validation->set_rules('email', 'Email', 'required');
+        $this->form_validation->set_rules('id', 'Role', 'required');
 
         if ($this->form_validation->run() == false) {
-
             $this->load->view('template/header', $data);
             $this->load->view('template/sidebar', $data);
             $this->load->view('template/topbar', $data);
             $this->load->view('admin/editRoleManagement', $data);
             $this->load->view('template/footer');
         } else {
-            $this->Admin_model->ubahMenu($id);
+            $this->Admin_model->ubahUserRoleManagement($id);
             $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">
-           Menu succes changed !!
+           Role Management succes changed !!
            </div>');
             redirect('admin/roleManagement');
         }
     }
 
-    public function deleteRoleManagement($id)
+    public function hapusRoleManagement($id)
     {
-        $this->Admin_model->hapusMenu($id);
+        $this->Admin_model->hapusUserRoleManagement($id);
         $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">
-         Menu Management Hasbeen deleted !!
+         Role Management Hasbeen deleted !!
            </div>');
         redirect('admin/roleManagement');
     }
